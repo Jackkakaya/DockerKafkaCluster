@@ -1,0 +1,94 @@
+version: '2'
+services:
+  zoo1:
+    image: zookeeper:latest
+    restart: always
+    hostname: zoo1
+    container_name: zoo1
+    ports:
+      - "2181:2181"
+    volumes:
+      - "/mnt/kafka_zk/zoo1/data:/data" # “:”前改成自己的目录
+      - "/mnt/kafka_zk/zoo1/datalog:/datalog" # “:”前改成自己的目录
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+    networks:
+      default:
+        ipv4_address: 172.23.0.11
+  broker1:
+    image: kafka:latest
+    restart: always
+    hostname: broker1
+    container_name: broker1
+    ports:
+      - "9091:9091"
+    external_links:
+      - zoo1
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zoo1:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9091
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://10.211.55.18:9091   ## 宿主机IP
+      KAFKA_ADVERTISED_HOST_NAME: broker1
+      KAFKA_ADVERTISED_PORT: 9091
+      JMX_PORT: 9988
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - "/mnt/kafka_zk/kafka1/data:/kafka"
+      - "/mnt/kafka_zk/kafka1/logs:/opt/kafka/logs"
+    networks:
+      default:
+        ipv4_address: 172.23.0.14
+  broker2:
+    image: kafka:latest
+    restart: always
+    hostname: broker2
+    container_name: broker2
+    ports:
+      - "9092:9092"
+    external_links:
+      - zoo1
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: zoo1:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.1.1:9092   ## 宿主机IP
+      KAFKA_ADVERTISED_HOST_NAME: broker2
+      KAFKA_ADVERTISED_PORT: 9092
+      JMX_PORT: 9988
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - "/mnt/kafka_zk/kafka2/data:/kafka"
+      - "/mnt/kafka_zk/kafka2/logs:/opt/kafka/logs"
+    networks:
+      default:
+        ipv4_address: 172.23.0.15
+  broker3:
+    image: kafka:latest
+    restart: always
+    hostname: broker3
+    container_name: broker3
+    ports:
+      - "9093:9093"
+    external_links:
+      - zoo1
+    environment:
+      KAFKA_BROKER_ID: 3
+      KAFKA_ZOOKEEPER_CONNECT: zoo1:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.1.1:9093  ## 宿主机IP
+      KAFKA_ADVERTISED_HOST_NAME: broker3
+      KAFKA_ADVERTISED_PORT: 9093
+      JMX_PORT: 9988
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - "/mnt/kafka_zk/kafka3/data:/kafka"
+      - "/mnt/kafka_zk/kafka3/logs:/opt/kafka/logs"
+    networks:
+      default:
+        ipv4_address: 172.23.0.16
+networks:
+  default:
+    external:
+      name: kafka_zk

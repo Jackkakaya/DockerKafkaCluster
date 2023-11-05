@@ -1,0 +1,17 @@
+FROM debian:11.8-slim
+
+RUN cat <<EOF > /etc/apt/sources.list 
+deb http://mirrors.aliyun.com/debian/ bullseye main non-free contrib
+deb-src http://mirrors.aliyun.com/debian/ bullseye main non-free contrib
+deb http://mirrors.aliyun.com/debian-security/ bullseye-security main
+deb-src http://mirrors.aliyun.com/debian-security/ bullseye-security main
+deb http://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib
+deb-src http://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib
+deb http://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib
+deb-src http://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib
+EOF
+
+RUN apt update && echo "y" |apt install openjdk-11-jdk openjdk-11-jre vim wget curl net-tools iputils-ping gcc g++ openssh-server
+RUN mkdir -p /run/sshd
+
+CMD [ "/bin/bash" ]
