@@ -11,7 +11,9 @@ deb http://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib
 deb-src http://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib
 EOF
 
-RUN apt update && echo "y" |apt install openjdk-11-jdk openjdk-11-jre vim wget curl net-tools iputils-ping gcc g++ openssh-server
+RUN apt update && echo "y" |apt install zsh openjdk-11-jdk openjdk-11-jre vim wget curl net-tools git iputils-ping gcc g++ openssh-server
 RUN mkdir -p /run/sshd
+
+RUN echo "y" | sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 CMD [ "/bin/bash" ]

@@ -16,7 +16,7 @@ RUN sed  -i "s|/tmp/zookeeper|$ZK_HOME/data|g" $ZK_HOME/conf/zoo.cfg; mkdir $ZK_
 ADD start-zk.sh /usr/bin/start-zk.sh 
 EXPOSE 2181 2888 3888
 
-WORKDIR /opt/zookeeper
+WORKDIR /opt/zookeeper/bin
 VOLUME ["/opt/zookeeper/conf", "/opt/zookeeper/data"]
 
 CMD /usr/sbin/sshd && bash /usr/bin/start-zk.sh
